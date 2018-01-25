@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/qiyue/Desktop/simplest_ffmpeg_android_encoder/app/build/intermediates/res/merged/debug/drawable-hdpi/ic_launcher.png",
+        "source": "/Users/qiyue/Desktop/simplest_ffmpeg_android_encoder/app/src/main/res/drawable-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/ndk/FFmpegDay05/app/build/intermediates/res/merged/debug/drawable-hdpi/ic_launcher.png",
+        "source": "/ndk/FFmpegDay05/app/src/main/res/drawable-hdpi/ic_launcher.png"
+    }
+]

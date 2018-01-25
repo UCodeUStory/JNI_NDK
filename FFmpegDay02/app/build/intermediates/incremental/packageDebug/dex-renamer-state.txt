@@ -1,0 +1,4 @@
+#Wed Aug 23 17:12:52 CST 2017
+base.0=/ndk/FFmpegDay02/app/build/intermediates/transforms/dex/debug/folders/1000/1f/main
+renamed.0=classes.dex
+file.0=/ndk/FFmpegDay02/app/build/intermediates/transforms/dex/debug/folders/1000/1f/main/classes.dex

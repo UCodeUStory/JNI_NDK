@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/qiyue/Desktop/simplest_ffmpeg_android_streamer/app/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/Users/qiyue/Desktop/simplest_ffmpeg_android_streamer/app/src/main/res/layout/activity_main.xml"
+    },
+    {
+        "merged": "/ndk/FFmpegDay06/app/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/ndk/FFmpegDay06/app/src/main/res/layout/activity_main.xml"
+    }
+]
