@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 
 import dalvik.system.DexClassLoader;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void injectClassLoader(DexClassLoader loader,Context context){
+    public  void injectClassLoader(DexClassLoader loader,Context context){
         //获取宿主的ClassLoader
         PathClassLoader pathLoader = (PathClassLoader)context.getClassLoader();
         try {
@@ -51,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
             //获取插件CassLoader中的dex数组
             Object pluginDexElements = getDexElements(pluginPathList);
             //获取合并后的pathList
-//            Object sumDexElements = combineArray(hostDexElements, pluginDexElements);
+            Object sumDexElements = combineArray(hostDexElements, pluginDexElements);
             //将合并的pathList设置到本应用的ClassLoader
-//            setField(hostPathList, suZhuPathList.getClass(), "dexElements", sumDexElements);
+            setFielddValue(hostPathList, hostPathList.getClass(), "dexElements", sumDexElements);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,29 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static void setField(String classname, String filedName, Object obj, Object filedVaule) {
-        try {
-            Class obj_class = Class.forName(classname);
-            Field field = obj_class.getDeclaredField(filedName);
-            field.setAccessible(true);
-            field.set(obj, filedVaule);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+
 
 
     private static Object getPathList(Object baseDexClassLoader)
@@ -103,4 +82,42 @@ public class MainActivity extends AppCompatActivity {
         localField.setAccessible(true);
         return localField.get(obj);
     }
+
+    /**
+     * 两个数组合并
+     *
+     * @param arrayLhs
+     * @param arrayRhs
+     * @return
+     */
+    private static Object combineArray(Object arrayLhs, Object arrayRhs) {
+        Class<?> localClass = arrayLhs.getClass().getComponentType();
+        int i = Array.getLength(arrayLhs);
+        int j = i + Array.getLength(arrayRhs);
+        Object result = Array.newInstance(localClass, j);
+        for (int k = 0; k < j; ++k) {
+            if (k < i) {
+                Array.set(result, k, Array.get(arrayLhs, k));
+            } else {
+                Array.set(result, k, Array.get(arrayRhs, k - i));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 为指定对象中的字段重新赋值
+     *
+     * @param obj
+     * @param claz
+     * @param filed
+     * @param value
+     */
+    public void setFielddValue(Object obj, Class<?> claz, String filed, Object value) throws NoSuchFieldException, IllegalAccessException {
+        Field field = claz.getDeclaredField(filed);
+        field.setAccessible(true);
+        field.set(obj, value);
+//        field.setAccessible(false);
+    }
+
 }
