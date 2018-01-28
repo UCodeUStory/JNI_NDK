@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private static Object getField(Object obj, Class<?> cl, String field)
             throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         //反射需要获取的字段
+
         Field localField = cl.getDeclaredField(field);
         localField.setAccessible(true);
         return localField.get(obj);
