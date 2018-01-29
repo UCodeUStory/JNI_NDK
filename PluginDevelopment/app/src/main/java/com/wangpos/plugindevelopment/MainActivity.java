@@ -1,10 +1,14 @@
 package com.wangpos.plugindevelopment;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -14,14 +18,36 @@ import dalvik.system.PathClassLoader;
 
 /**
  *  DexClassLoader可以加载jar / apk / dex，可以从SD卡中加载未安装的apk;
- PathClassLoader只能加载系统中已经安装过的apk;
+    PathClassLoader只能加载系统中已经安装过的apk;
  */
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DexClassLoader dexClassLoader = createDexClassLoader(this);
+
+        injectClassLoader(dexClassLoader,this);
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Class activityClass = null;
+                try {
+                    activityClass = Class.forName("com.wangpos.pluginapkdemo.TestActivity");
+
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                Log.i("qiyue","activityClass="+activityClass);
+                ComponentName componentName = new ComponentName("com.wangpos.pluginapkdemo","com.wangpos.pluginapkdemo.TestActivity");
+                Intent intent = new Intent();
+                intent.setComponent(componentName);
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -31,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
     public DexClassLoader createDexClassLoader(Activity pActivity) {
         String cachePath = pActivity.getCacheDir().getAbsolutePath();
         //sdcard/chajian_demo.apk
-        String apkPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/chajian_demo.apk";
+        String apkPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/pluginapkdemo.apk";
+        Log.i("qiyue","path="+apkPath);
         /**
          * 创建Dex参数说明
          */
@@ -92,9 +119,11 @@ public class MainActivity extends AppCompatActivity {
      * @return
      */
     private static Object combineArray(Object arrayLhs, Object arrayRhs) {
+
         Class<?> localClass = arrayLhs.getClass().getComponentType();
         int i = Array.getLength(arrayLhs);
         int j = i + Array.getLength(arrayRhs);
+        Log.i("qiyue","i="+i+"j="+j);
         Object result = Array.newInstance(localClass, j);
         for (int k = 0; k < j; ++k) {
             if (k < i) {
@@ -108,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 为指定对象中的字段重新赋值
-     *
      * @param obj
      * @param claz
      * @param filed
@@ -120,5 +148,6 @@ public class MainActivity extends AppCompatActivity {
         field.set(obj, value);
 //        field.setAccessible(false);
     }
+
 
 }
